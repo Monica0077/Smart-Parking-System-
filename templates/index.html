@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Parking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 20px;
+        }
+        .slots-table {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .slots-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .slots-table th, .slots-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .btn-container {
+            margin-top: 20px;
+        }
+        .btn-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .btn-container .search-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-container .show-btn {
+            background-color: #008CBA;
+            color: white;
+        }
+        .search-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-result {
+            margin-top: 10px;
+            color: green;
+            font-weight: bold;
+        }
+        .search-result.error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Smart Parking System</h1>
+
+        <!-- Display any messages -->
+        {% if message %}
+            <p style="color: red;"><strong>{{ message }}</strong></p>
+        {% endif %}
+        <p style="color: green;"><strong>{{ fee_info }}</strong></p>
+
+        <!-- Search Form for Vehicle Slot -->
+        <h2>Search for Your Vehicle's Slot</h2>
+        <form id="searchForm" onsubmit="searchSlot(event)">
+            <div class="search-container">
+                <input type="text" id="vehicle_number" name="vehicle_number" placeholder="Enter Vehicle Number" required>
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+        </form>
+        
+        <!-- Display search result below -->
+        <div id="searchResult" class="search-result"></div>
+
+        <!-- Show Slots Button -->
+        <div class="btn-container">
+            <button class="show-btn" onclick="toggleSlots()">Show Parking Slots</button>
+        </div>
+
+        <!-- Parking Slots Table (Initially hidden) -->
+        <div id="slotsTable" class="slots-table" style="display: none;">
+            <h2>Available Slots</h2>
+            <table border="1">
+                <tr>
+                    <th>Slot Number</th>
+                    <th>Vehicle Number</th>
+                </tr>
+                {% for slot, vehicle in slots.items() %}
+                    <tr>
+                        <td>{{ slot }}</td>
+                        <td>{{ vehicle if vehicle else "Available" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <!-- Park a Vehicle Form -->
+        <h2>Park a Vehicle</h2>
+        <form action="/park" method="post">
+            <label for="vehicle_number">Vehicle Number:</label>
+            <input type="text" name="vehicle_number" required>
+            <button type="submit">Park</button>
+        </form>
+
+        <!-- Release a Vehicle Form -->
+        <h2>Release a Vehicle</h2>
+        <form action="/release" method="post">
+            <label for="slot_number">Slot Number:</label>
+            <input type="number" name="slot_number" required>
+            <button type="submit">Release</button>
+        </form>
+    </div>
+
+    <script>
+        // Toggle parking slots table visibility
+        function toggleSlots() {
+            var table = document.getElementById("slotsTable");
+            table.style.display = table.style.display === "none" ? "block" : "none";
+        }
+
+        // Search vehicle slot using AJAX
+        function searchSlot(event) {
+            event.preventDefault();  // Prevent form submission
+
+            var vehicleNumber = document.getElementById("vehicle_number").value;
+
+            // Perform AJAX request to search for the vehicle's slot
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/search_slot?vehicle_number=" + vehicleNumber, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var resultDiv = document.getElementById("searchResult");
+                    if (response.found) {
+                        resultDiv.textContent = "Vehicle " + vehicleNumber + " is parked in slot " + response.slot;
+                        resultDiv.classList.remove("error");
+                    } else {
+                        resultDiv.textContent = "Vehicle " + vehicleNumber + " not found.";
+                        resultDiv.classList.add("error");
+                    }
+                }
+            };
+            xhr.send();
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - Smart Parking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .receipt-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .receipt-container h2 {
+            color: #333;
+        }
+        .receipt-container p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .receipt-container .total-fee {
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn-container .back-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-container .download-btn {
+            background-color: #008CBA;
+            color: white;
+        }
+    </style>
+
+    <!-- Add jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="receipt-container">
+        <h2>Receipt for Vehicle {{ vehicle_number }}</h2>
+        <p><strong>Entry Time:</strong> {{ entry_time }}</p>
+        <p><strong>Exit Time:</strong> {{ exit_time }}</p>
+        <p><strong>Duration Parked:</strong> {{ parked_duration }} hours</p>
+
+        <p class="total-fee">Total Fee: ₹{{ fee }}</p>
+
+        <div class="btn-container">
+            <!-- Back to Home button -->
+            <button class="back-btn" onclick="window.location.href='/'">Back to Home</button>
+            
+            <!-- Download Receipt button -->
+            <button class="download-btn" onclick="downloadReceipt()">Download Receipt</button>
+        </div>
+    </div>
+
+    <script>
+        function downloadReceipt() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Adding content to PDF
+            doc.setFont("Arial", "normal");
+            doc.text(`Receipt for Vehicle ${"{{ vehicle_number }}"}`, 20, 20);
+            doc.text(`Entry Time: ${"{{ entry_time }}"}`, 20, 30);
+            doc.text(`Exit Time: ${"{{ exit_time }}"}`, 20, 40);
+            doc.text(`Duration Parked: ${"{{ parked_duration }}"}`, 20, 50);
+            doc.text(`Total Fee: ₹${"{{ fee }}"}`, 20, 60);
+
+            // Save the generated PDF
+            doc.save('parking receipt.pdf');
+        }
+    </script>
+
+</body>
+</html>

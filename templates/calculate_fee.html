@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate Fee</title>
+</head>
+<body>
+    <h1>Calculate Parking Fee</h1>
+    <p>Vehicle Number: <strong>{{ vehicle_number }}</strong></p>
+    <form action="/calculate_fee?vehicle_number={{ vehicle_number }}" method="post">
+        <label for="hours_parked">Enter hours parked:</label>
+        <input type="number" name="hours_parked" step="0.1" required>
+        <button type="submit">Calculate Fee</button>
+    </form>
+</body>
+</html>

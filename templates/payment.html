@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .payment-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .payment-container h2 {
+            color: #333;
+        }
+        .payment-container .fee-info {
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+        .payment-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .payment-container button:hover {
+            background-color: #45a049;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        .form-row input {
+            flex: 1;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="payment-container">
+        <h2>Payment for Vehicle {{ vehicle_number }}</h2>
+        <p class="fee-info">Total Fee: ₹{{ fee }}</p>
+
+        <p><strong>Entry Time:</strong> {{ entry_time }}</p>
+        <p><strong>Duration Parked:</strong> {{ parked_duration }} hours</p>
+
+        {% if error_message %}
+        <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+
+        <form action="/confirm_payment" method="post">
+            <input type="hidden" name="vehicle_number" value="{{ vehicle_number }}">
+            <input type="hidden" name="slot_number" value="{{ slot_number }}">
+            <input type="hidden" name="fee" value="{{ fee }}">
+            <input type="hidden" name="entry_time" value="{{ entry_time }}">
+            <input type="hidden" name="parked_duration" value="{{ parked_duration }}">
+            
+            <label for="payment_status">Payment Status:</label>
+            <select name="payment_status" required>
+                <option value="paid" {% if payment_status == "paid" %}selected{% endif %}>Paid</option>
+                <option value="not_paid" {% if payment_status == "not_paid" %}selected{% endif %}>Not Paid</option>
+            </select>
+            
+            <h3>Card Details:</h3>
+            <label for="card_number">Card Number:</label>
+            <input type="text" name="card_number" placeholder="1234 5678 9876 5432" required>
+            <div class="form-row">
+                <div>
+                    <label for="expiry_date">Expiry Date:</label>
+                    <input type="text" name="expiry_date" placeholder="MM/YY" required>
+                </div>
+                <div>
+                    <label for="cvv">CVV:</label>
+                    <input type="text" name="cvv" placeholder="123" required>
+                </div>
+            </div>
+            
+            <button type="submit">Confirm Payment</button>
+        </form>
+    </div>
+
+</body>
+</html>
