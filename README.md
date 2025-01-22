@@ -1,5 +1,5 @@
 # Smart-Parking-System
-Automates parking space allocation and fee calculation.
+A python Project which uses Flask to create a web service that automates parking space allocation and fee calculation.
 
 
 # Functionalities
